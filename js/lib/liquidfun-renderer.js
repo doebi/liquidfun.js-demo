@@ -121,12 +121,11 @@ LiquidfunRenderer.prototype.flush = function () {
             gl.vertexAttribPointer(colorHandle, 4, gl.UNSIGNED_BYTE, false, 0, 0);
             */
 
-            //this.swap();
+            this.swap();
             gl.bindTexture(gl.TEXTURE_2D, this.textures.front);
 
             sprite.ball_shader.uniforms.size = radius * PTM * this.blurRadius;
             gl.drawArrays(gl.POINTS, 0, count);
-            /*
             this.swap();
 
             gl.bindBuffer(gl.ARRAY_BUFFER, sprite.quadbuffer);
@@ -156,7 +155,6 @@ LiquidfunRenderer.prototype.flush = function () {
             sprite.threshold_shader.uniforms.threshold = this.threshold;
             sprite.threshold_shader.uniforms.color = new Float32Array([1.0, 1.0, 1.0, 0.5]);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            */
         }
 
     }
