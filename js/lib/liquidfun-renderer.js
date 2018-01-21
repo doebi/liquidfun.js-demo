@@ -11,8 +11,8 @@ function LiquidfunRenderer(renderer) {
         -1, -1, 1, -1, -1, 1, 1, 1
     ]);
     this.textures = null;
-    this.blurRadius = 2;
-    this.threshold = 0.1;
+    this.blurRadius = 3.2;
+    this.threshold = 0.5;
 }
 
 LiquidfunRenderer.prototype = Object.create(PIXI.ObjectRenderer.prototype);
@@ -138,11 +138,11 @@ LiquidfunRenderer.prototype.flush = function () {
             sprite.blur_shader.uniforms.base = 0;
             sprite.blur_shader.uniforms.scale = this.texScale();
 
-            sprite.blur_shader.uniforms.dir = new Float32Array([0.0, 1.0]);
+            sprite.blur_shader.uniforms.dir = new Float32Array([0.0, 0.5]);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             this.swap();
 
-            sprite.blur_shader.uniforms.dir = new Float32Array([1.0, 0.0]);
+            sprite.blur_shader.uniforms.dir = new Float32Array([0.5, 0.0]);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             this.swap();
 
