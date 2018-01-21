@@ -1,0 +1,19 @@
+body {
+    margin: 0px;
+    overflow: hidden;
+}
+canvas {
+    padding: 0;
+    margin: auto;
+    display: block;
+    user-select: none;
+}
+p {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+#stats {
+    position: fixed;
+    top: 0;
+}
