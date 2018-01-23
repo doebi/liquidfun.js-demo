@@ -2,6 +2,12 @@ let PTM = 20;
 let sprites = [];
 let world, renderer, particleSystem;
 
+let gravity = new Box2D.b2Vec2(-2, -10);
+
+function getRandom(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
 function LiquidfunSprite(particleSystem) {
     PIXI.Container.call(this);
 
@@ -66,7 +72,7 @@ function createParticleSystem() {
     renderer.stage.addChild(particleSystemSprite);
 }
 
-function spawnParticles(radius, x, y, fx, fy) {
+function spawnParticles(radius, x, y) {
     let color = new Box2D.b2ParticleColor(0, 0, 255, 255);
     // flags
     let flags = (0<<0);
@@ -79,9 +85,13 @@ function spawnParticles(radius, x, y, fx, fy) {
     pgd.set_flags(flags);
     shape.set_m_p(new Box2D.b2Vec2(x, y));
     group = particleSystem.CreateParticleGroup(pgd);
-    if (fx && fy) {
-        group.ApplyLinearImpulse(new Box2D.b2Vec2(fx, fy));
-    }
+    return group;
+}
+
+function spawnRain() {
+    let x = getRandom(-20, 20);
+    let group = spawnParticles(0.09, x, 20);
+    //group.ApplyLinearImpulse(wind);
 }
 
 function init() {
@@ -105,7 +115,7 @@ function init() {
     renderer.stage.position.y = h/2;
 
     // world
-    world = new Box2D.b2World(new Box2D.b2Vec2(0, -10));
+    world = new Box2D.b2World(gravity);
 
     createBox(0, 0, 5, 1, true);
 
@@ -126,6 +136,7 @@ function init() {
         world.Step(1/60, 8, 3);
     }
     window.setInterval(update, 1000 / 60);
+    window.setInterval(spawnRain, 50);
 
     renderer.view.addEventListener("click", function(e) {
         let x = (e.layerX - w/2) / PTM;
