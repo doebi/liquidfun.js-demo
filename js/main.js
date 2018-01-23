@@ -57,6 +57,7 @@ function createParticleSystem() {
     let psd = new Box2D.b2ParticleSystemDef();
     psd.set_radius(0.1);
     particleSystem = world.CreateParticleSystem(psd);
+    particleSystem.SetMaxParticleCount(5000);
 
     let dummy = PIXI.Sprite.from(PIXI.Texture.EMPTY);
     renderer.stage.addChild(dummy);
@@ -65,12 +66,9 @@ function createParticleSystem() {
     renderer.stage.addChild(particleSystemSprite);
 }
 
-function spawnParticles(radius, x, y) {
-    // shoot parameters
-    // strength
-    let strength = 1;
+function spawnParticles(radius, x, y, fx, fy) {
     let color = new Box2D.b2ParticleColor(0, 0, 255, 255);
-    // let flags
+    // flags
     let flags = (0<<0);
 
     let pgd = new Box2D.b2ParticleGroupDef();
@@ -81,7 +79,9 @@ function spawnParticles(radius, x, y) {
     pgd.set_flags(flags);
     shape.set_m_p(new Box2D.b2Vec2(x, y));
     group = particleSystem.CreateParticleGroup(pgd);
-    //group.ApplyLinearImpulse(new Box2D.b2Vec2(x*strength, y*-strength));
+    if (fx && fy) {
+        group.ApplyLinearImpulse(new Box2D.b2Vec2(fx, fy));
+    }
 }
 
 function init() {
@@ -95,7 +95,10 @@ function init() {
     renderer = new PIXI.Application(800, 600, {backgroundColor : 0x8BB174});
     document.body.appendChild(renderer.view);
 
-    console.log(renderer);
+    //let killerShape = new Box2D.b2PolygonShape;
+    //killerShape.SetAsBox(w, h);
+    //let killerTransform = new Box2D.b2Transform;
+    //killerTransform.Set(new Box2D.b2Vec2(0, 0), 0);
 
     // shift 0/0 to the center
     renderer.stage.position.x = w/2;
@@ -119,7 +122,8 @@ function init() {
 
     // update loop
     function update() {
-        world.Step(1/50, 8, 3);
+        //particleSystem.DestroyParticlesInShape(killerShape, killerTransform);
+        world.Step(1/60, 8, 3);
     }
     window.setInterval(update, 1000 / 60);
 
