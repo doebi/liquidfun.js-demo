@@ -8,33 +8,6 @@ function getRandom(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-function LiquidfunSprite(particleSystem) {
-    PIXI.Container.call(this);
-
-    this.particleSystem = particleSystem;
-
-    this.ball_shader = new PIXI.glCore.GLShader(renderer.renderer.gl,
-        document.getElementById("ball_vert").innerHTML,
-        document.getElementById("ball_frag").innerHTML);
-    this.blur_shader = new PIXI.glCore.GLShader(renderer.renderer.gl,
-        document.getElementById("identity_vert").innerHTML,
-        document.getElementById("blur_frag").innerHTML);
-    this.threshold_shader = new PIXI.glCore.GLShader(renderer.renderer.gl,
-        document.getElementById("identity_vert").innerHTML,
-        document.getElementById("threshold_frag").innerHTML);
-    this.pos_buffer = renderer.renderer.gl.createBuffer();
-    this.color_buffer = renderer.renderer.gl.createBuffer();
-    this.quadbuffer = renderer.renderer.gl.createBuffer();
-}
-
-LiquidfunSprite.prototype = Object.create(PIXI.Container.prototype);
-LiquidfunSprite.prototype.constructor = LiquidfunSprite;
-
-LiquidfunSprite.prototype._renderWebGL = function (renderer) {
-    renderer.setObjectRenderer(renderer.plugins.liquidfun);
-    renderer.plugins.liquidfun.render(this);
-};
-
 function createBox(x, y, w, h, fixed) {
     let bd = new Box2D.b2BodyDef();
     if (!fixed) {
