@@ -20,12 +20,8 @@ LiquidfunRenderer.prototype.constructor = LiquidfunRenderer;
 
 PIXI.WebGLRenderer.registerPlugin('liquidfun', LiquidfunRenderer);
 
-LiquidfunRenderer.prototype.render = function (sprite) {
-    this.sprites[this.currentBatchSize++] = sprite;
-};
-
 LiquidfunRenderer.prototype.swap = function () {
-    var gl = this.renderer.gl,
+    let gl = this.renderer.gl,
         temp = this.textures.front;
     this.textures.front = this.textures.back;
     this.textures.back = temp;
@@ -44,8 +40,8 @@ LiquidfunRenderer.prototype.texScale = function() {
 };
 
 LiquidfunRenderer.prototype.createTexture = function(gl) {
-    var tex = gl.createTexture(),
-        scale = this.texScale();
+    let tex = gl.createTexture();
+    let scale = this.texScale();
     gl.bindTexture(gl.TEXTURE_2D, tex);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -56,9 +52,14 @@ LiquidfunRenderer.prototype.createTexture = function(gl) {
     return tex;
 };
 
-LiquidfunRenderer.prototype.flush = function () {
-    var renderer = this.renderer,
-        gl = renderer.gl;
+LiquidfunRenderer.prototype.render = function (sprite) {
+    let renderer = this.renderer;
+    let gl = renderer.gl;
+
+    // some hacky magic (thanks ivan)
+    renderer.bindVao(null);
+    renderer._activeShader = null;
+    renderer.bindTexture(null, 0, true);
 
     if (this.textures == null) {
         this.textures = {};
@@ -67,99 +68,94 @@ LiquidfunRenderer.prototype.flush = function () {
         this.textures.back = this.createTexture(gl);
     }
 
-    /*
     gl.enable(gl.BLEND);
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     gl.disable(gl.DEPTH_TEST);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    */
+    //gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
-    for (var i = 0; i < this.currentBatchSize; ++i) {
-        var sprite = this.sprites[i];
-        var count = sprite.particleSystem.GetParticleCount();
-        var radius = sprite.particleSystem.GetRadius();
+    let count = sprite.particleSystem.GetParticleCount();
+    let radius = sprite.particleSystem.GetRadius();
 
-        if (count > 0) {
-            var w = gl.canvas.width, h = gl.canvas.height;
-            fx = 0;
-            fy = 0;
+    if (count > 0) {
+        let w = gl.canvas.width, h = gl.canvas.height;
+        fx = 0;
+        fy = 0;
 
-            // start with ball shader
-            sprite.ball_shader.bind();
+        // start with ball shader
+        sprite.ball_shader.bind();
 
-            /* Position Buffer */
-            // get pointer
-            var pos_offset = sprite.particleSystem.GetPositionBuffer();
-            // read memory into JS Array
-            var raw_pos = new Float32Array(Module.HEAPU8.buffer, pos_offset.e, count * 2);
+        /* Position Buffer */
+        // get pointer
+        let pos_offset = sprite.particleSystem.GetPositionBuffer();
+        // read memory into JS Array
+        let raw_pos = new Float32Array(Module.HEAPU8.buffer, pos_offset.e, count * 2);
 
-            // initalize new Array for corrected values
-            var position = new Float32Array(count*2);
-            // transform physics engine coords to renderer coords
-            for (var i = 0; i < count; i++) {
-                position[i*2]   = (raw_pos[i*2]   - fx) * 2 * PTM / w;
-                position[i*2+1] = (raw_pos[i*2+1] - fy) * 2 * PTM / h;
-            }
-            // upload data to gpu
-            gl.bindBuffer(gl.ARRAY_BUFFER, sprite.pos_buffer);
-            gl.bufferData(gl.ARRAY_BUFFER, position, gl.DYNAMIC_DRAW);
-            var positionHandle = sprite.ball_shader.attributes.position.location;
-            gl.enableVertexAttribArray(positionHandle);
-            gl.vertexAttribPointer(positionHandle, 2, gl.FLOAT, false, 0, 0);
+        // initalize new Array for corrected values
+        let position = new Float32Array(count*2);
+        // transform physics engine coords to renderer coords
+        for (let i = 0; i < count; i++) {
+            position[i*2]   = (raw_pos[i*2]   - fx) * 2 * PTM / w;
+            position[i*2+1] = (raw_pos[i*2+1] - fy) * 2 * PTM / h;
+        }
+        // upload data to gpu
+        gl.bindBuffer(gl.ARRAY_BUFFER, sprite.pos_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, position, gl.DYNAMIC_DRAW);
+        let positionHandle = sprite.ball_shader.attributes.position.location;
+        gl.enableVertexAttribArray(positionHandle);
+        gl.vertexAttribPointer(positionHandle, 2, gl.FLOAT, false, 0, 0);
 
-            /* Color Buffer */
-            /*
-            // get pointer
-            var color_offset = sprite.particleSystem.GetColorBuffer();
-            // read memory into JS Array
-            var color = new Uint8Array(Module.HEAPU8.buffer, color_offset.e, count * 4);
-            // upload data to gpu
+        /* Color Buffer */
+        /*
+        // get pointer
+            let color_offset = sprite.particleSystem.GetColorBuffer();
+        // read memory into JS Array
+            let color = new Uint8Array(Module.HEAPU8.buffer, color_offset.e, count * 4);
+        // upload data to gpu
             gl.bindBuffer(gl.ARRAY_BUFFER, sprite.color_buffer);
             gl.bufferData(gl.ARRAY_BUFFER, color, gl.DYNAMIC_DRAW);
-            var colorHandle = sprite.ball_shader.attributes.color.location;
+            let colorHandle = sprite.ball_shader.attributes.color.location;
             gl.enableVertexAttribArray(colorHandle);
             gl.vertexAttribPointer(colorHandle, 4, gl.UNSIGNED_BYTE, false, 0, 0);
             */
 
-            this.swap();
-            gl.bindTexture(gl.TEXTURE_2D, this.textures.front);
+        this.swap();
+        gl.bindTexture(gl.TEXTURE_2D, this.textures.front);
 
-            sprite.ball_shader.uniforms.size = radius * PTM * this.blurRadius;
-            gl.drawArrays(gl.POINTS, 0, count);
-            this.swap();
+        sprite.ball_shader.uniforms.size = radius * PTM * this.blurRadius;
+        gl.drawArrays(gl.POINTS, 0, count);
+        this.swap();
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, sprite.quadbuffer);
-            gl.bufferData(gl.ARRAY_BUFFER, this.quad, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, sprite.quadbuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this.quad, gl.DYNAMIC_DRAW);
 
-            sprite.blur_shader.bind();
-            var positionHandle = sprite.blur_shader.attributes.position.location;
-            gl.enableVertexAttribArray(positionHandle);
-            gl.vertexAttribPointer(positionHandle, 2, gl.FLOAT, false, 0, 0);
-            sprite.blur_shader.uniforms.base = 0;
-            sprite.blur_shader.uniforms.scale = this.texScale();
+        sprite.blur_shader.bind();
+        let blurPositionHandle = sprite.blur_shader.attributes.position.location;
+        gl.enableVertexAttribArray(blurPositionHandle);
+        gl.vertexAttribPointer(positionHandle, 2, gl.FLOAT, false, 0, 0);
+        sprite.blur_shader.uniforms.base = 0;
+        sprite.blur_shader.uniforms.scale = this.texScale();
 
-            sprite.blur_shader.uniforms.dir = new Float32Array([0.0, 0.5]);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            this.swap();
+        sprite.blur_shader.uniforms.dir = new Float32Array([0.0, 0.5]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        this.swap();
 
-            sprite.blur_shader.uniforms.dir = new Float32Array([0.5, 0.0]);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-            this.swap();
+        sprite.blur_shader.uniforms.dir = new Float32Array([0.5, 0.0]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        this.swap();
 
-            gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-            sprite.threshold_shader.bind();
-            var positionHandle = sprite.threshold_shader.attributes.position.location;
-            gl.vertexAttribPointer(positionHandle, 2, gl.FLOAT, false, 0, 0);
-            sprite.threshold_shader.uniforms.base = 0;
-            sprite.threshold_shader.uniforms.scale = this.texScale();
-            sprite.threshold_shader.uniforms.threshold = this.threshold;
-            sprite.threshold_shader.uniforms.color = new Float32Array([1.0, 1.0, 1.0, 0.5]);
-            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-        }
-
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        sprite.threshold_shader.bind();
+        let thresholdPositionHandle = sprite.threshold_shader.attributes.position.location;
+        gl.vertexAttribPointer(thresholdPositionHandle, 2, gl.FLOAT, false, 0, 0);
+        sprite.threshold_shader.uniforms.base = 0;
+        sprite.threshold_shader.uniforms.scale = this.texScale();
+        sprite.threshold_shader.uniforms.threshold = this.threshold;
+        sprite.threshold_shader.uniforms.color = new Float32Array([1.0, 1.0, 1.0, 0.5]);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     }
 
-    this.currentBatchSize = 0;
+    //renderer.state.pop();
+
 };
 
 LiquidfunRenderer.prototype.destroy = function () {

@@ -2,7 +2,7 @@ let PTM = 20;
 let sprites = [];
 let world, renderer, particleSystem;
 
-let gravity = new Box2D.b2Vec2(-2, -10);
+let gravity = new Box2D.b2Vec2(0, -10);
 
 function getRandom(min, max) {
     return Math.random() * (max - min) + min;
@@ -30,7 +30,7 @@ function LiquidfunSprite(particleSystem) {
 LiquidfunSprite.prototype = Object.create(PIXI.Container.prototype);
 LiquidfunSprite.prototype.constructor = LiquidfunSprite;
 
-LiquidfunSprite.prototype._renderWebGL = function (renderer){
+LiquidfunSprite.prototype._renderWebGL = function (renderer) {
     renderer.setObjectRenderer(renderer.plugins.liquidfun);
     renderer.plugins.liquidfun.render(this);
 };
@@ -136,7 +136,7 @@ function init() {
         world.Step(1/60, 8, 3);
     }
     window.setInterval(update, 1000 / 60);
-    window.setInterval(spawnRain, 50);
+    window.setInterval(spawnRain, 10);
 
     renderer.view.addEventListener("click", function(e) {
         let x = (e.layerX - w/2) / PTM;
