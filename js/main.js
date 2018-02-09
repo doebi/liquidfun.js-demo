@@ -112,8 +112,8 @@ function init() {
     window.setInterval(spawnRain, 10);
 
     renderer.view.addEventListener("click", function(e) {
-        let x = (e.layerX - w/2) / PTM;
-        let y = (-e.layerY + h/2) / PTM;
+        let x = ((e.clientX - renderer.view.offsetLeft) - w/2) / PTM;
+        let y = (-(e.clientY - renderer.view.offsetTop) + h/2) / PTM;
         if (e.shiftKey) {
             spawnParticles(1, x, y);
         } else {
