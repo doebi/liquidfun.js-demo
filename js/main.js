@@ -62,8 +62,8 @@ function spawnParticles(radius, x, y) {
 }
 
 function spawnRain() {
-    let x = getRandom(-20, 20);
-    let group = spawnParticles(0.09, x, 20);
+    let x = getRandom(-25, 25);
+    let group = spawnParticles(0.09, x, 25);
     //group.ApplyLinearImpulse(wind);
 }
 
@@ -73,9 +73,9 @@ function init() {
     document.body.appendChild(stats.domElement);
 
     // renderer
-    let w = 800;
-    let h = 600;
-    renderer = new PIXI.Application(800, 600, {backgroundColor : 0x8BB174});
+    let w = window.innerWidth;
+    let h = window.innerHeight;
+    renderer = new PIXI.Application(w, h, {backgroundColor : 0x8BB174});
     document.body.appendChild(renderer.view);
 
     //let killerShape = new Box2D.b2PolygonShape;
