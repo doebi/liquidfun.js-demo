@@ -17,5 +17,8 @@
   "scripts": {
     "build": "webpack --config dev/webpack-config/production.js",
     "serve": "webpack-dev-server --config dev/webpack-config/development.js"
+  },
+  "dependencies": {
+    "pixi.js": "4.7.0"
   }
 }

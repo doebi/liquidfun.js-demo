@@ -1,3 +1,5 @@
+import * as PIXI from 'pixi.js';
+
 const loadShaders = async (obj) => Object.fromEntries(
   await Promise.all(
     Object
