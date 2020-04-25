@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import Stats from 'stats.js';
 import { LiquidfunRenderer } from './js/libs/liquidfun/LiquidfunRenderer.js';
 import { LiquidfunSprite } from './js/libs/liquidfun/LiquidfunSprite.js';
 

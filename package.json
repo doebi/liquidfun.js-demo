@@ -19,6 +19,7 @@
     "serve": "webpack-dev-server --config dev/webpack-config/development.js"
   },
   "dependencies": {
-    "pixi.js": "4.7.0"
+    "pixi.js": "4.7.0",
+    "stats.js": "^0.17.0"
   }
 }
