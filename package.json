@@ -1,0 +1,13 @@
+{
+  "name": "liquidfun",
+  "version": "0.0.1",
+  "main": "web/index.html",
+  "repository": "git@github.com:amoshydra/liquidfun.js-demo.git",
+  "author": "Amos Wong <amoswwj@gmail.com>",
+  "devDependencies": {
+    "live-server": "^1.2.1"
+  },
+  "scripts": {
+    "serve": "live-server web"
+  }
+}
