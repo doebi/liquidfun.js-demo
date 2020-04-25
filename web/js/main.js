@@ -1,6 +1,7 @@
-let PTM = 20;
 let sprites = [];
-let world, renderer, particleSystem;
+let world, particleSystem;
+window.PTM = 20;
+window.renderer;
 
 let gravity = new Box2D.b2Vec2(0, -10);
 
@@ -41,7 +42,7 @@ function createParticleSystem() {
     let dummy = PIXI.Sprite.from(PIXI.Texture.EMPTY);
     renderer.stage.addChild(dummy);
 
-    particleSystemSprite = new LiquidfunSprite(particleSystem);
+    const particleSystemSprite = new LiquidfunSprite(particleSystem);
     renderer.stage.addChild(particleSystemSprite);
 }
 
@@ -57,7 +58,7 @@ function spawnParticles(radius, x, y) {
     pgd.set_color(color);
     pgd.set_flags(flags);
     shape.set_m_p(new Box2D.b2Vec2(x, y));
-    group = particleSystem.CreateParticleGroup(pgd);
+    const group = particleSystem.CreateParticleGroup(pgd);
     return group;
 }
 
@@ -75,7 +76,7 @@ function init() {
     // renderer
     let w = window.innerWidth;
     let h = window.innerHeight;
-    renderer = new PIXI.Application(w, h, {backgroundColor : 0x8BB174});
+    window.renderer = new PIXI.Application(w, h, {backgroundColor : 0x8BB174});
     document.body.appendChild(renderer.view);
 
     //let killerShape = new Box2D.b2PolygonShape;
