@@ -1,4 +1,7 @@
+import { LiquidfunRenderer } from './libs/liquidfun/LiquidfunRenderer.js';
 import { LiquidfunSprite } from './libs/liquidfun/LiquidfunSprite.js';
+
+PIXI.WebGLRenderer.registerPlugin('liquidfun', LiquidfunRenderer);
 
 let sprites = [];
 let world, particleSystem;
