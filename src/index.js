@@ -1,5 +1,5 @@
-import { LiquidfunRenderer } from './libs/liquidfun/LiquidfunRenderer.js';
-import { LiquidfunSprite } from './libs/liquidfun/LiquidfunSprite.js';
+import { LiquidfunRenderer } from './js/libs/liquidfun/LiquidfunRenderer.js';
+import { LiquidfunSprite } from './js/libs/liquidfun/LiquidfunSprite.js';
 
 PIXI.WebGLRenderer.registerPlugin('liquidfun', LiquidfunRenderer);
 

@@ -1,10 +1,14 @@
-import { loadShader } from './ShaderLoader.js';
-
 const loadShaders = async (obj) => Object.fromEntries(
   await Promise.all(
     Object
       .entries(obj)
-      .map(async ([key, path]) => [key, await loadShader(path)])
+      .map(async ([key, path]) => [
+        key,
+        (await import(
+          /* webpackChunkName: "shaders/" */
+          './shaders/' + path
+        )).default
+      ])
   )
 );
 
@@ -24,11 +28,11 @@ export class LiquidfunSprite extends PIXI.Container {
 
   async setupShaders() {
     const shaders = await loadShaders({
-      ballFrag: './shaders/ball.fs.glsl',
-      ballVert: './shaders/ball.vs.glsl',
-      identifyVert: './shaders/identity.vs.glsl',
-      blurFrag: './shaders/blur.fs.glsl',
-      thresholdFrag: './shaders/threshold.fs.glsl',
+      ballFrag: 'ball.fs.glsl',
+      ballVert: 'ball.vs.glsl',
+      identifyVert: 'identity.vs.glsl',
+      blurFrag: 'blur.fs.glsl',
+      thresholdFrag: 'threshold.fs.glsl',
     });
 
     this.ball_shader = new PIXI.glCore.GLShader(renderer.renderer.gl, shaders.ballVert, shaders.ballFrag);
