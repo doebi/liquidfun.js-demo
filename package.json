@@ -5,9 +5,11 @@
   "repository": "git@github.com:amoshydra/liquidfun.js-demo.git",
   "author": "Amos Wong <amoswwj@gmail.com>",
   "devDependencies": {
-    "live-server": "^1.2.1"
+    "live-server": "^1.2.1",
+    "spdy": "^4.0.2"
   },
   "scripts": {
-    "serve": "live-server web"
+    "serve": "live-server web",
+    "serve-h2": "yarn serve --https=dev/https.conf.js --https-module=spdy"
   }
 }
