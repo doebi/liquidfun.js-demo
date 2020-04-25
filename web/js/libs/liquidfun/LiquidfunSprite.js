@@ -2,7 +2,7 @@ function highest2(x) {
   return Math.pow(2, Math.ceil(Math.log(x) / Math.LN2));
 };
 
-function LiquidfunSprite(particleSystem) {
+export function LiquidfunSprite(particleSystem) {
   PIXI.Container.call(this);
 
   this.particleSystem = particleSystem;

@@ -1,3 +1,5 @@
+import { LiquidfunSprite } from './libs/liquidfun/LiquidfunSprite.js';
+
 let sprites = [];
 let world, particleSystem;
 window.PTM = 20;
